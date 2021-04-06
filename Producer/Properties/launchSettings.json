@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Producer": {
+      "commandName": "Project",
+      "commandLineArgs": "ocp-compute-03.opdemo1.lbank.lt:32735 test"
+    }
+  }
+}
