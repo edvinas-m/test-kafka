@@ -39,10 +39,26 @@ namespace Count
                 Console.WriteLine($"{en.Key} : {en.Value}");
             }
 
+            var ix = Environment.GetEnvironmentVariable("COUNTER-PULSE-INTERVAL-MS");
+            int nx = 5000;
+            if(ix != null)
+            {
+                Console.WriteLine($"COUNTER-PULSE-INTERVAL-MS = {ix}");
+                try
+                {
+                    nx = Convert.ToInt32(ix);
+                }
+                catch 
+                { 
+                    nx = 5000;
+                }
+
+            }
+
             while (max == -1 || n < max)
             {
                 Console.WriteLine($"{DateTime.Now} : {++n}");
-                await Task.Delay(5000);
+                await Task.Delay(nx);
             }
         }
     }
