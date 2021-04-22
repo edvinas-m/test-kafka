@@ -36,6 +36,9 @@ namespace Confluent.Kafka.Examples.ProducerExample
                 Console.WriteLine($"{en.Key} : {en.Value}");
             }
 
+            int xx = 10;
+            Console.WriteLine($"Number to string : {xx.ToString()}");
+
             var ix = Environment.GetEnvironmentVariable("KAFKA_TEST_PULSE_INTERVAL_MS");
             int nx = 5000;
             if (ix != null)
