@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-1-config
+  namespace: kafka-1
+data:
+  counter-pulse-internal-ms: "4000"
+  broker-name: "kafka-1-cluster-kafka-bootstrap:9092"
+  topic-name: "test-kafka-1"

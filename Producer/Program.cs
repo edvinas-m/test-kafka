@@ -28,6 +28,75 @@ namespace Confluent.Kafka.Examples.ProducerExample
 {
     public class Program
     {
+        static async Task Main()
+        {
+            var en = Environment.GetEnvironmentVariables().GetEnumerator();
+            while (en.MoveNext())
+            {
+                Console.WriteLine($"{en.Key} : {en.Value}");
+            }
+
+            var ix = Environment.GetEnvironmentVariable("KAFKA_TEST_PULSE_INTERVAL_MS");
+            int nx = 5000;
+            if (ix != null)
+            {
+                Console.WriteLine($"KAFKA_TEST_PULSE_INTERVAL_MS = {ix}");
+                try
+                {
+                    nx = Convert.ToInt32(ix);
+                }
+                catch
+                {
+                    nx = 5000;
+                }
+            }
+
+            var brokerList = Environment.GetEnvironmentVariable("KAFKA_TEST_BROKER_NAME");
+            if (brokerList == null)
+            {
+                Console.WriteLine("No broker");
+                Console.ReadLine();
+                return;
+            }
+            var topicName = Environment.GetEnvironmentVariable("KAFKA_TEST_TOPIC_NAME");
+            if (topicName == null)
+            {
+                Console.WriteLine("No topic");
+                Console.ReadLine();
+                return;
+            }
+            var config = new ProducerConfig { BootstrapServers = brokerList };
+            using (var producer = new ProducerBuilder<string, string>(config).Build())
+            {
+                Console.WriteLine("\n-----------------------------------------------------------------------");
+                Console.WriteLine($"Producer {producer.Name} producing on topic {topicName}.");
+                Console.WriteLine("-----------------------------------------------------------------------");
+
+                for (int n = 0; n < int.MaxValue; n++)
+                {
+                    try
+                    {
+                        // Note: Awaiting the asynchronous produce request below prevents flow of execution
+                        // from proceeding until the acknowledgement from the broker is received (at the 
+                        // expense of low throughput).
+
+                        var deliveryReport = await producer.ProduceAsync(
+                            topicName, new Message<string, string> { Key = DateTime.Now.ToString("u"), Value = n.ToString() });
+
+                        Console.WriteLine($"delivered to: {deliveryReport.TopicPartitionOffset}");
+                    }
+                    catch (ProduceException<string, string> e)
+                    {
+                        Console.WriteLine($"failed to deliver message: {e.Message} [{e.Error.Code}]");
+                    }
+                    await Task.Delay(nx);
+                }
+            }
+        }
+    }
+}
+
+/*
         public static async Task Main(string[] args)
         {
             if (args.Length != 2)
@@ -40,7 +109,7 @@ namespace Confluent.Kafka.Examples.ProducerExample
             string topicName = args[1];
 
             var config = new ProducerConfig { BootstrapServers = brokerList };
-            
+
             using (var producer = new ProducerBuilder<string, string>(config).Build())
             {
                 Console.WriteLine("\n-----------------------------------------------------------------------");
@@ -111,5 +180,5 @@ namespace Confluent.Kafka.Examples.ProducerExample
                 // need to call producer.Flush before disposing the producer.
             }
         }
-    }
-}
+*/
+
