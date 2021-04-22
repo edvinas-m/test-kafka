@@ -36,9 +36,6 @@ namespace Confluent.Kafka.Examples.ProducerExample
                 Console.WriteLine($"{en.Key} : {en.Value}");
             }
 
-            int xx = 10;
-            Console.WriteLine($"Number to string : {xx.ToString()}");
-
             var ix = Environment.GetEnvironmentVariable("KAFKA_TEST_PULSE_INTERVAL_MS");
             int nx = 5000;
             if (ix != null)
@@ -84,7 +81,7 @@ namespace Confluent.Kafka.Examples.ProducerExample
                         // expense of low throughput).
 
                         var deliveryReport = await producer.ProduceAsync(
-                            topicName, new Message<string, string> { Key = DateTime.Now.ToString("u"), Value = n.ToString() });
+                            topicName, new Message<string, string> { Key = DateTime.Now.ToString("u"), Value = n.ToString(), Timestamp = Timestamp.Default });
 
                         Console.WriteLine($"delivered to: {deliveryReport.TopicPartitionOffset}");
                     }
