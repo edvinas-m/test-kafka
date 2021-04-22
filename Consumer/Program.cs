@@ -193,23 +193,41 @@ namespace Confluent.Kafka.Examples.ConsumerExample
         private static void PrintUsage()
             => Console.WriteLine("Usage: .. <subscribe|manual> <broker,broker,..> <topic> [topic..]");
 
-        public static void Main(string[] args)
+        public static void Main()
         {
-            if (args.Length < 3)
+            var en = Environment.GetEnvironmentVariables().GetEnumerator();
+            while (en.MoveNext())
             {
-                PrintUsage();
+                Console.WriteLine($"{en.Key} : {en.Value}");
+            }
+            
+            var mode = "manual";
+            var brokerList = Environment.GetEnvironmentVariable("KAFKA_TEST_BROKER_NAME");
+            if (brokerList == null)
+            {
+                Console.WriteLine("No broker");
+                Console.ReadLine();
                 return;
             }
+            var topicName = Environment.GetEnvironmentVariable("KAFKA_TEST_TOPIC_NAME");
+            if (topicName == null)
+            {
+                Console.WriteLine("No topic");
+                Console.ReadLine();
+                return;
+            }
+            List<string> topics = new List<string> { topicName };
 
-            var mode = args[0];
-            var brokerList = args[1];
-            var topics = args.Skip(2).ToList();
-
-            Console.WriteLine($"Started consumer, Ctrl-C to stop consuming");
+            Console.WriteLine($"Started consumer of topics: {string.Join(", ", topics.ToArray())}");
 
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => {
                 e.Cancel = true; // prevent the process from terminating.
+                cts.Cancel();
+            };
+            AppDomain.CurrentDomain.ProcessExit += (_, e) =>
+            {
+                //ctx.Cancel = true;
                 cts.Cancel();
             };
 
@@ -228,3 +246,4 @@ namespace Confluent.Kafka.Examples.ConsumerExample
         }
     }
 }
+
