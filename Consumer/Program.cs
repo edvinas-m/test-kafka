@@ -174,7 +174,7 @@ namespace Confluent.Kafka.Examples.ConsumerExample
                             // Note: End of partition notification has not been enabled, so
                             // it is guaranteed that the ConsumeResult instance corresponds
                             // to a Message, and not a PartitionEOF event.
-                            Console.WriteLine($"Received message at {consumeResult.TopicPartitionOffset} : {consumeResult.Message.Timestamp} : {consumeResult.Message.Key} : {consumeResult.Message.Value}");
+                            Console.WriteLine($"Received message at {consumeResult.TopicPartitionOffset} : {consumeResult.Message.Timestamp.UtcDateTime.ToString("u")} : {consumeResult.Message.Key} : {consumeResult.Message.Value}");
                         }
                         catch (ConsumeException e)
                         {
