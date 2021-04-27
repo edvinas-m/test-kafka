@@ -40,7 +40,7 @@ namespace Count
             }
 
             var ix = Environment.GetEnvironmentVariable("COUNTER-PULSE-INTERVAL-MS");
-            int nx = 5000;
+            int nx = 10000;
             if(ix != null)
             {
                 Console.WriteLine($"COUNTER-PULSE-INTERVAL-MS = {ix}");
